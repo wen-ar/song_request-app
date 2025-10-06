@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>📋 管理者後台</title>
+    <script>
+        async function exportData() {
+            const res = await fetch("/export", { method: "POST" });
+            const result = await res.json();
+            alert(result.status);
+        }
+    </script>
+</head>
+<body>
+    <h2>📋 點歌資料總覽</h2>
+    <table border="1">
+        <tr><th>姓名</th><th>性別</th><th>歌名</th><th>Spotify連結</th></tr>
+        {% for row in data %}
+        <tr>
+            <td>{{ row[0] }}</td>
+            <td>{{ row[1] }}</td>
+            <td>{{ row[2] }}</td>
+            <td><a href="{{ row[3] }}" target="_blank">連結</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+    <br>
+    <button onclick="exportData()">📤 匯出 Excel</button>
+</body>
+</html>
