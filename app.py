@@ -91,6 +91,10 @@ def export_data():
 @app.route("/admin")
 def admin():
     return render_template("admin.html", data=pending_requests)
+
+import os
+
 if __name__ == "__main__":
-    print("✅ Flask 伺服器啟動中…")
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))  # Render 提供的埠號
+    print(f"✅ Flask 伺服器啟動中…（port: {port}）")
+    app.run(host="0.0.0.0", port=port, debug=True)
