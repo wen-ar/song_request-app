@@ -12,8 +12,8 @@ client_id = "878d5c21e6354bf29674089cca6b5bc9"
 client_secret = "817ebebc33c545bcaeb097365a3e50cc"
 
 # 🕒 表單開放時間設定
-start_time = datetime(2025, 10, 6, 20, 0)  # 開始時間
-end_time = datetime(2025, 10, 6, 22, 0)    # 結束時間
+start_time = datetime(2025, 10, 7, 10, 0)  # 開始時間
+end_time = datetime(2025, 10, 7, 22, 0)    # 結束時間
 
 # 📦 暫存使用者點歌資料
 pending_requests = []
