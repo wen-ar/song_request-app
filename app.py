@@ -4,6 +4,22 @@ import requests
 import base64
 from datetime import datetime
 from pathlib import Path
+from flask import redirect
+
+@app.route("/admin")
+def admin():
+    return render_template("admin.html")
+
+@app.route("/admin_data")
+def admin_data():
+    return jsonify([
+        {
+            "requester": r[0],
+            "gender": r[1],
+            "title": r[2],
+            "spotify_url": r[3]
+        } for r in pending_requests
+    ])
 
 app = Flask(__name__)
 
