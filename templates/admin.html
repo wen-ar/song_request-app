@@ -1,30 +1,62 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <title>📋 管理者後台</title>
-    <script>
-        async function exportData() {
-            const res = await fetch("/export", { method: "POST" });
-            const result = await res.json();
-            alert(result.status);
-        }
-    </script>
+  <meta charset="UTF-8">
+  <title>🎧 管理者後台</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script>
+    async function fetchData() {
+      const res = await fetch("/admin_data");
+      const data = await res.json();
+      const tbody = document.getElementById("table-body");
+      tbody.innerHTML = "";
+      data.forEach((item, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${item.requester}</td>
+          <td>${item.gender}</td>
+          <td>${item.title}</td>
+          <td><a href="${item.spotify_url}" target="_blank">🔗</a></td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    async function exportData() {
+      const res = await fetch("/export", { method: "POST" });
+      const result = await res.json();
+      alert(result.status);
+    }
+
+    function filterTable() {
+      const keyword = document.getElementById("search").value.toLowerCase();
+      const rows = document.querySelectorAll("#table-body tr");
+      rows.forEach(row => {
+        row.style.display = row.innerText.toLowerCase().includes(keyword) ? "" : "none";
+      });
+    }
+
+    window.onload = fetchData;
+  </script>
 </head>
 <body>
-    <h2>📋 點歌資料總覽</h2>
-    <table border="1">
-        <tr><th>姓名</th><th>性別</th><th>歌名</th><th>Spotify連結</th></tr>
-        {% for row in data %}
-        <tr>
-            <td>{{ row[0] }}</td>
-            <td>{{ row[1] }}</td>
-            <td>{{ row[2] }}</td>
-            <td><a href="{{ row[3] }}" target="_blank">連結</a></td>
-        </tr>
-        {% endfor %}
-    </table>
-    <br>
-    <button onclick="exportData()">📤 匯出 Excel</button>
+  <h2 class="fade-in">🎧 點歌管理後台</h2>
+
+  <input id="search" oninput="filterTable()" placeholder="搜尋歌名或姓名">
+  <button onclick="exportData()">📤 匯出 Excel</button>
+
+  <table class="slide-up">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>姓名</th>
+        <th>性別</th>
+        <th>歌名</th>
+        <th>Spotify</th>
+      </tr>
+    </thead>
+    <tbody id="table-body"></tbody>
+  </table>
 </body>
 </html>
