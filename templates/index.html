@@ -1,69 +1,79 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <title>🎵 點歌系統</title>
-    <script>
-        async function searchSpotify() {
-            const keyword = document.getElementById("title").value;
-            if (!keyword) return;
-            const res = await fetch(`/spotify?q=${encodeURIComponent(keyword)}`);
-            const data = await res.json();
-            const resultsDiv = document.getElementById("results");
-            resultsDiv.innerHTML = "";
-            data.tracks.forEach(track => {
-                const btn = document.createElement("button");
-                btn.innerText = `${track.name} - ${track.artist}`;
-                btn.onclick = () => {
-                    document.getElementById("title").value = track.name;
-                    document.getElementById("spotify_url").value = track.url;
-                };
-                resultsDiv.appendChild(btn);
-            });
-        }
+  <meta charset="UTF-8">
+  <title>🎵 點歌系統</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script>
+    async function searchSpotify() {
+      const keyword = document.getElementById("title").value;
+      if (!keyword) return;
+      const res = await fetch(`/spotify?q=${encodeURIComponent(keyword)}`);
+      const data = await res.json();
+      const resultsDiv = document.getElementById("results");
+      resultsDiv.innerHTML = "";
+      data.tracks.forEach(track => {
+        const btn = document.createElement("button");
+        btn.innerText = `${track.name} - ${track.artist}`;
+        btn.onclick = () => {
+          document.getElementById("title").value = track.name;
+          document.getElementById("spotify_url").value = track.url;
+        };
+        resultsDiv.appendChild(btn);
+      });
+    }
 
-        async function submitForm() {
-            const payload = {
-                name: document.getElementById("name").value,
-                gender: document.getElementById("gender").value,
-                title: document.getElementById("title").value,
-                spotify_url: document.getElementById("spotify_url").value
-            };
-            const res = await fetch("/submit", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
-            const result = await res.json();
-            alert(result.status === "success" ? "✅ 點歌成功！" : result.status);
-        }
+    async function submitForm() {
+      const payload = {
+        name: document.getElementById("name").value,
+        gender: document.getElementById("gender").value,
+        title: document.getElementById("title").value,
+        spotify_url: document.getElementById("spotify_url").value
+      };
+      const res = await fetch("/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const result = await res.json();
+      const msg = document.getElementById("success-message");
+      msg.innerText = result.status === "success" ? "✅ 點歌成功！" : result.status;
+      msg.style.display = "block";
+    }
 
-        async function exportData() {
-            const res = await fetch("/export", { method: "POST" });
-            const result = await res.json();
-            alert(result.status);
-        }
-    </script>
+    async function exportData() {
+      const res = await fetch("/export", { method: "POST" });
+      const result = await res.json();
+      alert(result.status);
+    }
+  </script>
 </head>
 <body>
-    <h2>🎤 點歌表單</h2>
+  <h2 class="fade-in">🎤 點歌表單</h2>
 
-    {% if form_open %}
-        姓名：<input id="name"><br>
-        性別：
-        <select id="gender">
-            <option value="男">男</option>
-            <option value="女">女</option>
-        </select><br>
-        歌名：<input id="title" oninput="searchSpotify()"><br>
-        <input type="hidden" id="spotify_url">
-        <div id="results"></div><br>
-        <button onclick="submitForm()">送出</button>
-    {% else %}
-        <p>⚠️ 表單已關閉，請於指定時間內填寫。</p>
-    {% endif %}
+  {% if form_open %}
+    <div class="slide-up">
+      <label>姓名：</label>
+      <input id="name"><br>
 
-    <hr>
-    <button onclick="exportData()">📤 匯出資料</button>
+      <label>性別：</label>
+      <select id="gender">
+        <option value="男">男</option>
+        <option value="女">女</option>
+      </select><br>
+
+      <label>歌名：</label>
+      <input id="title" oninput="searchSpotify()"><br>
+
+      <input type="hidden" id="spotify_url">
+      <div id="results"></div><br>
+
+      <button onclick="submitForm()">送出</button>
+      <button onclick="exportData()">匯出 Excel</button>
+    </div>
+    <div id="success-message" class="fade-in" style="display:none;"></div>
+  {% else %}
+    <div class="fade-in">⏳ 表單尚未開放或已結束，請稍候再試。</div>
+  {% endif %}
 </body>
 </html>
